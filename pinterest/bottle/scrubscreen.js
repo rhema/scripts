@@ -2,6 +2,17 @@ var page = require('webpage').create(),
     system = require('system'),
     address, output, size;
 
+var renderme = 1;
+
+page.onConsoleMessage = function(msg)
+{
+	console.log(msg);
+	if(msg == "nopenopenope")
+	{
+		renderme = 0;
+	}
+}
+
 if (system.args.length < 3 || system.args.length > 5) {
     console.log('Usage: rasterize.js URL filename [paperwidth*paperheight|paperformat] [zoom]');
     console.log('  paper (pdf output) examples: "5in*7.5in", "10cm*20cm", "A4", "Letter"');
@@ -32,6 +43,13 @@ if (system.args.length < 3 || system.args.length > 5) {
             		{
             			fullname = $($(".fullname")[0]).html();
             		}
+            		else
+            		{
+            			fullname = $(".userProfileHeaderName").html();
+            		}
+            		
+            		console.log("I HEARBY GIVE THIS FIRST NAME TO YOU!!!!");
+            		console.log(fullname);
             		
 		    		//$(".firstAttribution").children(".attributionName").html("anon"); //$("attributionTitle").contains()
 		    		$(".firstAttribution:contains("+fullname+")").children(".attributionName").html("anon").html("anon");
@@ -46,8 +64,11 @@ if (system.args.length < 3 || system.args.length > 5) {
 					$(".fullname").html("anon");
 
             	});
-            	
-                page.render(output);
+            	if(renderme == 1)
+            	{
+                	page.render(output);
+                	console.log("THIS WILL NOT RENDER BECAUSE SCRUBBING FAILED.");
+                }
                 phantom.exit();
             }, 200);
         }
