@@ -46,12 +46,17 @@ if (system.args.length !== 2) {
 		        page.includeJs("http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js", function() {
 		            page.evaluate(function() {		            			            	
 
-		            	var getImgSize = function(imgSrc) {
+		            	var getImgSize = function(imgSrc, isog) {
 		            		console.log("Getting image size for:"+imgSrc)
 						    var newImg = new Image();
 						    newImg.src = imgSrc;
 						    var height = newImg.height;
 						    var width = newImg.width;
+						    if(isog)
+						    {
+						    	width=640;
+						    	height=480;
+						    }
 						    return {"width":width,"height": height, "image_src":imgSrc};
 						}
 
@@ -67,7 +72,7 @@ if (system.args.length !== 2) {
 		                	var ogurl = $('meta[property="og:image"]').attr('content');
 		                	console.log(ogurl);
 		                	
-		                	all.push(getImgSize(ogurl));
+		                	all.push(getImgSize(ogurl,1));
 		                	//console.log("Found OG!!!"+all[0]);
 		                }
 		                
@@ -77,6 +82,7 @@ if (system.args.length !== 2) {
 		                {
 		                	//console.log($(images[i]).attr("src"));
 		                	all.push( getImgSize( images[i].src) );
+		                	
 		                }
 		                
 		                //decending by points
