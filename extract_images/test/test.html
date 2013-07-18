@@ -1,0 +1,92 @@
+<html>
+<head>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>	
+</head>
+
+<body>
+	<div>
+		<span> <textarea cols="150" rows="20" id="query">
+http://www.flickr.com/photos/kali-kold/
+http://www.flickr.com/photos/kali-kold/8345182714/
+http://www.weather.com/weather/today/USTX1439:1
+http://weather.weatherbug.com/TX/College%20Station-weather.html?zcode=z6286&zip=77840
+http://www.kbtx.com/
+http://www.kbtx.com/weather
+http://www.cnn.com/2013/07/18/politics/cuba-migration-talks/index.html?hpt=us_c1
+http://www.landofnod.com/cribs/kids-gear/ducduc-for-nod-verona-crib/s611242
+https://www.google.com/search?q=chair&source=lnms&tbm=isch&sa=X&ei=XAjoUaPZB5K68wTazIGQCw&ved=0CAkQ_AUoAQ&biw=1441&bih=955
+http://www.yankodesign.com/2007/04/11/mosquito-chair-by-michael-bihain/
+http://jackschull.wordpress.com/2011/02/07/the-aware-chair/comfy-chair/
+http://angrylittledesigner.wordpress.com/2012/05/08/influential-chair-designs/
+http://eofdreams.com/photo/chair/05/
+http://www.theverge.com/2013/7/18/4530946/htc-one-mini-specs-release-date-price
+http://instagram.com/p/b3wcUuMkLI/
+http://www.tumblr.com/tagged/before+and+after
+http://www.youtube.com/watch?v=1QtdPfz_faM
+			   </textarea> <input type="button" value="test" onclick="javascript:test()"> </span>
+	</div>
+	<div id="results">
+		
+	</div>
+</body>
+
+<script>
+
+	
+
+	//Note, this expects the image_extraction_sever.js to be run on localhost:8001
+    function test_url(index)
+    {
+    	var query = urls[index];
+    	var surl = "";
+    	surl += encodeURI(query);
+    	console.log("testing..."+query);
+    	$.getJSON('http://localhost:8001/?url='+surl, function(data) {
+    		
+    		
+    		var appendme = "<h4>"+query+"</h4>";
+    		
+    		var images = data["extract_images_response"]["images"]    		
+    		for(var i=0;i<images.length; i+=1)
+    		{
+    			console.log(images[i]);
+    			
+    			appendme += "<img src='"+images[i].image_src+"'/>";
+    		}
+    		appendme+="</div>";
+    		$("#results").append(appendme);
+    		test_url(index+1);
+		});
+    }
+    
+    var urls = [];
+
+	function test()
+	{
+		var q = $("#query").val();
+		console.log("Searching for "+q+"...");
+		var urls_t = q.split("\n");
+		
+		for(var i=0;i<urls_t.length;i+=1) 
+		{
+			var url = urls_t[i];
+			if (/^\s+$/.test(url))
+            {
+            	continue;//only whitespace
+            }
+            urls.push(url);
+		}
+		test_url(0);
+		//search_n_place(q);
+	}
+	
+	var searched = {};
+	
+	$(document).ready(function() {
+		console.log("started!");    	
+	});
+	
+</script>
+
+</html>
+
