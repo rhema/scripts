@@ -22,7 +22,7 @@ if (system.args.length !== 2) {
             'Access-Control-Allow-Headers': '*'
         };
         
-        var url = request.url.split("=")[1];
+        var url = request.url.split("?url=")[1];
         url = decodeURIComponent(url);
 
 		//setTimeout( function(){
@@ -36,13 +36,18 @@ if (system.args.length !== 2) {
 		    	response.close();
 		    	page.close()
 		    }
+		    else
+		    {
+		    	console.log("NOISE----:"+msg);
+		    }
 		};
 		page.open(url, function(status) {
 		    if ( status === "success" ) {
-		        page.includeJs("http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js", function() {
+		        page.includeJs("http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js", function() {
 		            page.evaluate(function() {		            			            	
 
 		            	var getImgSize = function(imgSrc) {
+		            		console.log("Getting image size for:"+imgSrc)
 						    var newImg = new Image();
 						    newImg.src = imgSrc;
 						    var height = newImg.height;
@@ -51,13 +56,41 @@ if (system.args.length !== 2) {
 						}
 
 		                //console.log("URL:"+$($("img")[0]).attr("src"));
-		                var images = $("img");	
+		                
 		                var all=[];
+		                
+		                var og = $('meta[property="og:image"]');
+		                console.log(og);
+		                if(og != null)
+		                {
+		                	console.log("NOT NULL!!!");
+		                	var ogurl = $('meta[property="og:image"]').attr('content');
+		                	console.log(ogurl);
+		                	
+		                	all.push(getImgSize(ogurl));
+		                	//console.log("Found OG!!!"+all[0]);
+		                }
+		                
+		                var images = $("img");	
+		                
 		                for(var i=0;i<images.length;i++)
 		                {
 		                	//console.log($(images[i]).attr("src"));
 		                	all.push( getImgSize( images[i].src) );
 		                }
+		                
+		                //decending by points
+		                
+		                var score_result = function(res,all)
+		                {
+		                	var points = 0;
+		                	points += res.width*res.height;
+		                	points += (all.length - all.indexOf(res))*.05;//more points if first
+		                	return points;
+		                }
+		                
+		                all.sort(function(a,b) { return parseFloat(score_result(b,all)) - parseFloat(score_result(a,all)) } );
+		                
 		                var res = {"extract_images_response":{"images":all}} ;
 		                
 		                /*! JSON v3.2.5 | http://bestiejs.github.io/json3 | Copyright 2012-2013, Kit Cambridge | http://kit.mit-license.org */
