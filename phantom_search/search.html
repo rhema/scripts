@@ -1,0 +1,39 @@
+<html>
+<head>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>	
+</head>
+
+<body>
+	<div>
+		<span> <input id="query"/><input type="button" value="Ok" onclick="javascript:search()"/> </span>
+	</div>
+	<div id="results">
+		
+	</div>
+</body>
+
+<script>
+	//Note, this expects the image_extraction_sever.js to be run on localhost:8001
+    function search_n_place(query)
+    {
+    	var surl = "https%3A%2F%2Fwww.google.com%2Fsearch%3Fsite%3Dimghp%26tbm%3Disch%26source%3Dhp%26biw%3D1422%26bih%3D780%26q%3D";
+    	surl += query;
+    	$.getJSON('http://localhost:8001/?url='+surl, function(data) {
+    		for(var i=0;i<data.length; i+=1)
+    		{
+    			console.log(data[i]);
+    			$("#results").prepend("<img src='"+data[i].image_src+"'/>");
+    		}
+		});
+    }
+
+	function search()
+	{
+		var q = $("#query").val();
+		console.log("Searching for "+q+"...");
+		search_n_place(q);
+	}
+</script>
+
+</html>
+
