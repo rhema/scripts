@@ -12,11 +12,14 @@ if (system.args.length !== 2) {
 
         console.log('Request at ' + new Date());
         console.log(JSON.stringify(request, null, 4));
-
         response.statusCode = 200;
         response.headers = {
             'Cache': 'no-cache',
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+            'Access-Control-Max-Age': '1000',
+            'Access-Control-Allow-Headers': '*'
         };
         
         var url = request.url.split("=")[1];
@@ -31,14 +34,13 @@ if (system.args.length !== 2) {
 		    {
 		    	response.write(msg.split("URL:")[1]);
 		    	response.close();
+		    	page.close()
 		    }
 		};
 		page.open(url, function(status) {
 		    if ( status === "success" ) {
 		        page.includeJs("http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js", function() {
-		            page.evaluate(function() {
-		            	
-		            	
+		            page.evaluate(function() {		            			            	
 		            	
 		            	var getImgSize = function(imgSrc) {
 						    var newImg = new Image();
@@ -54,40 +56,13 @@ if (system.args.length !== 2) {
 		                for(var i=0;i<images.length;i++)
 		                {
 		                	//console.log($(images[i]).attr("src"));
-		                	all.push( getImgSize( $(images[i]).attr("src") ));
+		                	all.push( getImgSize( images[i].src) );
 		                }
 		                console.log("URL:"+JSON.stringify(all));
 		            });
 		        });
 		    }
 		});
-		
-		
-			
-		//response.write("<h1>"+url+"</h1>");
-        //response.close();
-        
-        
-        //}, 5000 );
-		//f(response,url);
-        
-           //response.write("<h1>"+url+"</h1>");
-           //response.close();
-        /*
-        response.write('<html>');
-        response.write('<head>');
-        response.write('<title>Hello, world!</title>');
-        response.write('</head>');
-        response.write('<body>');
-        response.write('<p>This is from PhantomJS web server.</p>');
-        response.write('<p>Request data:</p>');
-        response.write('<pre>');
-        response.write(JSON.stringify(request, null, 4));
-        response.write('</pre>');
-        response.write('</body>');
-        response.write('</html>');
-        response.close();
-        */
     });
 
     if (service) {
