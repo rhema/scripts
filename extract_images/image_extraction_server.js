@@ -58,7 +58,8 @@ if (system.args.length !== 2) {
 		                	//console.log($(images[i]).attr("src"));
 		                	all.push( getImgSize( images[i].src) );
 		                }
-		                console.log("URL:"+JSON.stringify(all));
+		                var res = {"extract_images_response":{"images":all}} ;
+		                console.log("URL:"+JSON.stringify(res));
 		            });
 		        });
 		    }

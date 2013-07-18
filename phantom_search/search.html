@@ -22,10 +22,13 @@
     	var surl = "https%3A%2F%2Fwww.google.com%2Fsearch%3Fsite%3Dimghp%26tbm%3Disch%26source%3Dhp%26biw%3D1422%26bih%3D780%26q%3D";
     	surl += query;
     	$.getJSON('http://localhost:8001/?url='+surl, function(data) {
-    		for(var i=0;i<data.length; i+=1)
+    		
+    		var images = data["extract_images_response"]["images"]
+    		
+    		for(var i=0;i<images.length; i+=1)
     		{
-    			console.log(data[i]);
-    			$("#results").prepend("<img src='"+data[i].image_src+"'/>");
+    			console.log(images[i]);
+    			$("#results").prepend("<img src='"+images[i].image_src+"'/>");
     		}
 		});
     }
