@@ -13,6 +13,9 @@
 </body>
 
 <script>
+
+	
+
 	//Note, this expects the image_extraction_sever.js to be run on localhost:8001
     function search_n_place(query)
     {
@@ -33,6 +36,38 @@
 		console.log("Searching for "+q+"...");
 		search_n_place(q);
 	}
+	
+	
+	var recognition;//via http://stiltsoft.com/blog/2013/05/google-chrome-how-to-use-the-web-speech-api/
+	
+	var searched = {};
+	
+	$(document).ready(function() {
+    	var recognition = new webkitSpeechRecognition();
+    	recognition.continuous = true;
+    	recognition.interimResults = false;
+    	recognition.lang = "en";
+    	recognition.onresult = function (event) 
+    	{
+    		//console.log(event);
+    		for(var i=0;i<event.results.length;i+=1)
+    		{
+    			var t = event.results[i][0].transcript;
+    			console.log(t);
+    			$("#query").val(t);
+    			if(!(t in searched))
+    			{
+    				search();
+    			}
+    			searched[t] = 1;
+    		}
+    		//recognition.stop();
+    		//recognition.start();
+    	};
+    	recognition.start();
+    	
+	});
+	
 </script>
 
 </html>
