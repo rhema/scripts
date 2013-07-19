@@ -22,19 +22,42 @@ if (system.args.length !== 2) {
             'Access-Control-Allow-Headers': '*'
         };
         
+        
+        
         var url = request.url.split("?url=")[1];
         url = decodeURIComponent(url);
 
 		//setTimeout( function(){
 
 		var page = require('webpage').create();
+		var finished = 0;
 
+
+		//Take up to X seconds
+        setTimeout(function(){
+        	console.log("Timeout check.");
+        	if(finished)
+        	{
+        		console.log("Already responded");
+        		return;
+        	}
+        	if(response)
+        	{
+	        	response.statusCode=500;
+	        	response.write("Timeout.");
+	        	response.close();
+	        	page.close();
+        	}
+        }
+        ,15000);//15 seconds
+        
 		page.onConsoleMessage = function(msg) {
 		    if(msg.indexOf("URL:") == 0)
 		    {
 		    	response.write(msg.split("URL:")[1]);
 		    	response.close();
 		    	page.close()
+		    	finished=1;
 		    }
 		    else
 		    {
@@ -121,6 +144,14 @@ if (system.args.length !== 2) {
 		                console.log("URL:"+JSON.stringify(res));
 		            });
 		        });
+		    }
+		    else
+		    {
+		    	response.statusCode=500;
+	        	response.write("Page failed to load.  Nothing extracted.");
+	        	response.close();
+	        	page.close();
+	        	finished = 1;
 		    }
 		});
     });
