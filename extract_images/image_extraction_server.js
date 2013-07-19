@@ -104,7 +104,9 @@ if (system.args.length !== 2) {
 		                for(var i=0;i<images.length;i++)
 		                {
 		                	//console.log($(images[i]).attr("src"));
-		                	all.push( getImgSize( images[i].src) );
+		                	res = getImageSize( images[i].src) );
+		                	if (res.width >= 80 && res.height >= 80)
+		                		all.push( res );
 		                	
 		                }
 		                
