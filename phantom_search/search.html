@@ -21,7 +21,7 @@
     {
     	var surl;// = "https%3A%2F%2Fwww.google.com%2Fsearch%3Fsite%3Dimghp%26tbm%3Disch%26source%3Dhp%26biw%3D1422%26bih%3D780%26q%3D";
     	surl = "http://www.tumblr.com/tagged/"
-    	surl += query.replace(/ /g,"+");
+    	surl += $.trim(query).replace(/ /g,"+");
     	$.getJSON('http://localhost:8001/?url='+surl, function(data) {
     		
     		var images = data["extract_images_response"]["images"]
