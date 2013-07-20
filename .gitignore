@@ -33,3 +33,5 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+meh/pycleaner/input.txt
+meh/pycleaner/data
