@@ -61,7 +61,7 @@ if (system.args.length !== 2) {
 		    }
 		    else
 		    {
-		    	console.log("NOISE----:"+msg);
+		    	//console.log("NOISE----:"+msg);
 		    }
 		};
 		page.open(url, function(status) {
@@ -93,9 +93,14 @@ if (system.args.length !== 2) {
 		                {
 		                	console.log("NOT NULL!!!");
 		                	var ogurl = $('meta[property="og:image"]').attr('content');
+		                	if(ogurl)
+		                	{
+		                		
+		                	
 		                	console.log(ogurl);
 		                	
 		                	all.push(getImgSize(ogurl,1));
+		                	}
 		                	//console.log("Found OG!!!"+all[0]);
 		                }
 		                
