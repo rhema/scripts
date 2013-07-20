@@ -19,9 +19,21 @@
 	//Note, this expects the image_extraction_sever.js to be run on localhost:8001
     function search_n_place(query)
     {
-    	var surl;// = "https%3A%2F%2Fwww.google.com%2Fsearch%3Fsite%3Dimghp%26tbm%3Disch%26source%3Dhp%26biw%3D1422%26bih%3D780%26q%3D";
-    	surl = "http://www.tumblr.com/tagged/"
-    	surl += $.trim(query).replace(/ /g,"+");
+    	var surl;
+    	var gsearch = 1;
+    	if(gsearch)
+    	{
+    		surl = "https%3A%2F%2Fwww.google.com%2Fsearch%3Fsite%3Dimghp%26tbm%3Disch%26source%3Dhp%26biw%3D1422%26bih%3D780%26q%3D";
+    		surl += $.trim(query);
+    	}
+    	else
+    	{
+    		surl = "http://www.tumblr.com/tagged/"
+    		surl += $.trim(query).replace(/ /g,"+");
+    	}
+    	//
+    	//surl = "http://www.tumblr.com/tagged/"
+    	//surl += $.trim(query).replace(/ /g,"+");
     	$.getJSON('http://localhost:8001/?url='+surl, function(data) {
     		
     		var images = data["extract_images_response"]["images"]
@@ -30,7 +42,7 @@
     		for(var i=0;i<images.length; i+=1)
     		{
     			console.log(images[i]);
-    			prependme+="<img src='"+images[i].image_src+"'/>";
+    			prependme+="<img width='100' src='"+images[i].image_src+"'/>";
     		}
     		prependme+="</div>"
     		$("#results").prepend(prependme);
@@ -49,8 +61,10 @@
 	
 	var searched = {};
 	
+	var recognition = null;
+	
 	$(document).ready(function() {
-    	var recognition = new webkitSpeechRecognition();
+    	recognition = new webkitSpeechRecognition();
     	recognition.continuous = true;
     	recognition.interimResults = false;
     	recognition.lang = "en";
@@ -71,6 +85,7 @@
     		//recognition.stop();
     		//recognition.start();
     	};
+    	
     	recognition.start();
     	
 	});
