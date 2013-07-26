@@ -4,6 +4,8 @@ import time
 import random
 import os
 from bottle import error
+import sys
+
 
 save_location = "pinboards/"
 
@@ -87,7 +89,7 @@ def index(name='World'):
     current_folder = save_location+hash+"/"
     current_file = current_folder+"all.pdf"
     
-    v = ["/usr/local/bin/phantomjs", "scrubscreen.js", "http://pinterest.com/"+name, current_file, "12in*8in"]#, "&"]
+    v = ["/usr/local/bin/phantomjs", "scrubscreen.js", "http://pinterest.com/"+name+"/", current_file, "12in*8in"]#, "&"]
     subprocess.call(" ".join(v), shell=True)
     if output == "" or "Usage:" in output:
         return fail_page
@@ -96,11 +98,18 @@ def index(name='World'):
         if len(b) == 0:
             continue
         current_file =  current_folder+b+".pdf"
-        v = ["/usr/local/bin/phantomjs", "scrubscreen.js", "http://pinterest.com/"+name+"/"+b, current_file, "12in*8in", "&"]
+        v = ["/usr/local/bin/phantomjs", "scrubscreen.js", "http://pinterest.com/"+name+"/"+b+"/", current_file, "12in*8in", "&"]
         subprocess.call(" ".join(v), shell=True)
 #        
     #subprocess.Popen(v, shell=True, close_fds=False)
 #    time.sleep(1)
     return template('<h3>It worked!</h3>Please scroll down and enter this into the box: <h3>{{hash}}</h3>', hash=hash)
 
-run(host='localhost', port=12001)
+host='localhost'
+port=12001
+if len(sys.argv) > 1:
+    try:
+        host,port = sys.argv[1].split(":")
+    except:
+        print "use like this example: python serve.py 0.0.0.0:555"
+run(host=host, port=port)
