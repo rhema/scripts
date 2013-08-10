@@ -1,0 +1,163 @@
+
+
+
+<html>
+<head>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script type='text/javascript' src='javascripts/jquery.tipsy.js'></script>
+<!-- <script type='text/javascript' src='associations.js'></script> -->
+<link rel="stylesheet" href="stylesheets/tipsy.css" type="text/css" />
+</head>
+
+<body>
+	<div>
+		<span> <textarea id="query" rows="20" cols="40">
+			{
+			    "bob": [
+			    ],
+			    "sam": [
+			        "sally"
+			    ],
+			    "sally": [
+			        "sam",
+			        "bob"
+			    ]
+			}
+		</textarea><input type="button" value="Ok" onclick="javascript:search()"/> </span>
+	</div>
+	<svg width="500" height="500" id="results">
+		
+	</svg>
+</body>
+
+<script>
+
+    var node_index = {};
+	function construct_cirlces(raw_json)
+	{
+		var n = JSON.parse( raw_json );//convert from dict to array
+		//var n = raw_json;
+		console.log(n)
+		var nodes = [];
+		var num = 0;
+		var cf = d3.scale.category10();
+		for(i in n)
+		{
+			var content = {};
+			content['num'] = num;
+			content['name'] = i;
+			content['links'] = n[i];
+			content['color'] = cf(num*num);
+			num+=1;
+			nodes.push(content);
+		}
+		
+		//have
+		var r = 7;
+		var width = 500 - r*2;
+		var hnum = Math.ceil(Math.sqrt(nodes.length));
+		var hwidth = width / hnum;
+		
+		
+		console.log(hnum);
+		console.log(hwidth);
+		console.log("end static");
+		//console.log(nodes);
+		d3.select("#results").selectAll("circle")//not sure why I say circle when none exists yet
+			.data(nodes)
+			.enter().append("circle").attr('r',r)
+			.attr('cx',function(d) { return hwidth*(d.num%hnum) + 1*r;} )
+			.attr('cy',function(d) { return hwidth*(Math.floor(d.num/hnum)) + 1*r;} )
+			.attr('id',function(d) {return d.name;})
+			.style('fill',function(d){return d.color;})
+			
+			
+			var once = 0;
+			d3.select("#results").selectAll("circle").each(
+				function(d) {
+					var me = d3.select(this);
+					var stroke = me.style('fill');
+					//console.log("Stroke "+stroke);
+					//console.log(me);
+					var x1 = me.attr('cx')-r;
+					var y1 = me.attr('cy')-r;
+					
+					if(once)
+					   return
+					for(var j in d.links)
+					{
+						
+						var you = d3.select("#"+d.links[j]);
+						var x2 = you.attr('cx');
+						var y2 = you.attr('cy');
+						// console.log(x1);
+						// console.log(y1);
+						// console.log(x2);
+						// console.log(y2);
+						d3.select("#results").append("line").attr("x1",x1).attr("y1",y1).attr("x2",x2).attr("y2",y2).attr("stroke-width", 2).attr("stroke",stroke).attr('opacity', .8);
+					}
+					//once = 1;
+				}
+			)
+			
+			
+			$('svg circle').tipsy({ 
+	        gravity: 's', 
+	        html: true, 
+	        title: function() {
+	          var d = this.__data__;
+	          
+	          /*
+	          
+	          console.log(d);
+	          //more fancy things here...
+	          d3.select(this).transition().style("fill","green").attr('r',5);
+	          
+	          if(!(d3.select(this).attr('stop')))
+	          {
+		        for(var i in d.links)
+		        {
+		          	//console.log(d.links[i]);
+		          	var link = "#"+d.links[i];
+		          	d3.select(link).transition().style("fill","blue").attr('r',5);
+		          	d3.select(link).attr('stop',1);
+		          	$(link).tipsy("show");
+	          	}
+	          }
+	          */
+	          return d.name;
+	        }
+	      })
+			//.text(function(d) {this.attr('r',d); return "b";});
+			//console.log(nodes);
+	}
+
+	function search()
+	{
+		var q = $("#query").val();
+		//console.log("Searching for "+q+"...");
+		//search_n_place(q);
+		construct_cirlces(q);
+		//construct_cirlces(associations);
+		
+	}
+	
+	
+	var searched = {};
+	
+	var recognition = null;
+	
+	$(document).ready(function() {
+    	
+    	
+    	 $(function() {
+		   $('a[rel=tipsy]').tipsy({fade: true, gravity: 'e'});
+		 });
+    	
+	});
+	
+</script>
+
+</html>
+
