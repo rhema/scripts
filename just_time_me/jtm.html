@@ -1,0 +1,209 @@
+<html manifest="manifest.dat">
+<head>
+    <title>Just Time Me Please... d</title>
+    <meta name="viewport" content="user-scalable=no">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js" type="text/javascript"></script>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="stopwatch.js"></script>    
+    <script type="text/javascript">
+		
+		var count_me_down = [];
+		
+		function ticker()
+		{
+			for (task in count_me_down)
+			{
+				//console.log("Task.."+task);
+				if(count_me_down[task]['time'] > 0)
+				{
+					count_me_down[task]['time'] -= 1;
+					break;
+				}
+				else
+				{
+					if(count_me_down[task]['time'] == 0)
+					{
+					  alarm.play();
+					  count_me_down[task]['time']-=1;
+					}
+				}
+			}
+			visualize_count_downs();
+		}
+		
+		$(document).ready(function() {
+			
+		function save()
+		{
+			localStorage.setItem("time_input", $("#time_input").val());
+		}	
+		
+		$("#time_input").val(localStorage.getItem("time_input"));
+		
+		$("#time_input").keyup(function(){
+			save();
+		});
+		
+		
+		
+  		// Handler for .ready() called.
+  		window.setInterval("ticker()",1000);
+
+		});
+		function add_countdown(task,time,full)
+		{
+			console.log("breaking");
+			console.log(task);
+			console.log(time);
+			console.log(full);
+			if(!(task in count_me_down))
+				{
+					count_me_down[task] = {};
+				}
+			count_me_down[task]['time'] = parseFloat(time*60);
+			count_me_down[task]['full'] = full;
+		}
+		
+		function visualize_count_downs(){
+			$("#timers_area").empty();
+			for (task in count_me_down)
+			{
+			  time = count_me_down[task]['time'];
+			  $("#timers_area").append("<div id=\""+task+"\"><span id='spanme' class='spanner'><label>"+task+"</labal><label id='"+task+"_time'>: "+time+"</labal></span></div>");
+			  $("#"+task).css("color",count_me_down[task]['full']['color']);
+			  //console.log("tick tick tick...");
+			  
+			  //count_me_down[task] = {}
+			  //count_me_down[task]['time'];
+			  var add = 50-Math.min(time,50);
+			  
+			  //$("#spanme").css("background-color","rgb("+(add+200)+",200,200)");
+			  
+			  
+			  
+				
+			}
+			
+			var r_size = 4;
+			var times = count_me_down;
+			  var by_minute = [];
+			  var num_min = 0;
+			  //console.log(times);
+			  for(i in times)
+			 {
+					//add_countdown(times[i]['task'],times[i]['time']);
+					for(var k=0; k<times[i]['time']/60.0; k+=1)
+					{
+					  time_obj = {'task':times[i]['task'], 'min':num_min, 'color':times[i]['full']['color']};
+					  by_minute.push(time_obj);
+					  num_min += 1;
+					}
+				}
+			  d3.select("#timespot").selectAll("circle").remove();
+			  
+			  d3.select("#timespot").selectAll("circle").data(by_minute).enter()
+				.append("circle")
+				.attr('r',r_size)
+				.attr('cy',function(d){ return 25; })
+				.attr('cx',function(d){ return r_size+d.min*2*r_size; })
+				.style('fill',function(d){return d.color;})
+				
+		}
+		
+		function parse_times()
+		{
+			var times = [];
+			var entries = $("#time_input").val().split("\n");
+			for (i in entries)
+			{
+				var entry = entries[i].split(",");
+				times.push({'task':entry[0],'time':Number(entry[1])});
+			}
+			return times;
+		}
+		function start_timers()
+		{
+			var r_size = 5;
+			var cf = d3.scale.category10();
+			console.log("starting timers!!!!");
+			var times = parse_times();
+			for(i in times)
+			{
+				add_countdown(times[i]['task'],times[i]['time'], times[i]);
+				//some parsing
+				times[i]['order'] = i;
+				times[i]['color'] = cf(i);
+			}
+			console.log(times);
+			
+			// by_minute = [];
+			// var num_min = 0;
+			// for(i in times)
+			// {
+				// //add_countdown(times[i]['task'],times[i]['time']);
+				// for(var k=0; k<times[i]['time']; k+=1)
+				// {
+				  // time_obj = {'task':times[i]['task'], 'min':num_min, 'color':times[i]['color']};
+				  // by_minute.push(time_obj);
+				  // num_min += 1;
+				// }
+			// }
+			
+			
+			
+		}
+	</script>
+    <!-- <link rel="stylesheet" href="stopwatch.css" />-->
+    
+    <style type="text/css">
+  	body {
+    background-color: #DDDDDD 
+    }
+    
+    </style>
+</head>
+<body id="body">
+	<div><p>Enter tasks as text and minute pairs spearated by newlines.</p></div>
+<div>
+	<div id="input boxes">
+	  <textarea rows="10" id="time_input"></textarea>
+	  <input type="button" value="START" onclick="start_timers()"/>
+	</div>
+	
+	<div id="timers_area">
+		
+	</div>
+	<div>
+		<svg id="timespot" width="1200" height="400"></svg>
+	</div>
+	
+	<!--
+    <div id="container" class="container">
+        <div id="hours" class="numbers"></div>
+        <div id="sep1" class="numbers">:</div>
+        <div id="minutes" class="numbers"></div>
+        <div id="sep2" class="numbers">:</div>
+        <div id="seconds" class="numbers"></div>    
+    </div>
+    <div id="stopwatch" class="controls" onClick="myNameSpace.stopWatchClicked()">Stopwatch</div>
+    <div id="timer" class="controls" onClick="myNameSpace.timerClicked()">Timer</div>
+    <div id="startButton" class="controls" onClick="myNameSpace.startTime()">Start</div>
+    <div id="stopButton" class="controls" onClick="myNameSpace.resetTime()">Reset</div>
+    <div id="arrowDownHour" class="nav" onClick="myNameSpace.arrowClicked(hours,false)">&#9660;</div>
+    <div id="arrowUpHour" class="nav" onClick="myNameSpace.arrowClicked(hours,true)">&#9650;</div>
+    <div id="arrowDownMin" class="nav" onClick="myNameSpace.arrowClicked(minutes,false)">&#9660;</div>
+    <div id="arrowUpMin" class="nav" onClick="myNameSpace.arrowClicked(minutes,true)">&#9650;</div>
+    <div id="arrowDownSec" class="nav" onClick="myNameSpace.arrowClicked(seconds,false)">&#9660;</div>
+    <div id="arrowUpSec" class="nav" onClick="myNameSpace.arrowClicked(seconds,true)">&#9650;</div>
+    <div class="title">A simple stopwatch and countdown timer.</div>
+    <div id="about" class="about" onMouseOver="myNameSpace.aboutOver()" onMouseOut="myNameSpace.aboutOut()">i</div>
+    <div id="links" class="links"><a href="http://www.royevansia.com" target="_blank">www.royevansia.com</a> | <img  src="res/twitter_newbird_white.png" height="12px" alt="Twitter" onClick="window.location='http://twitter.com/pr00t'" /></div>
+   -->
+    <audio id="alarm" preload="auto">
+    	<source src="res/alarm.aac" type="audio/aac" />
+        <source src="res/alarm.wav" type="audio/wav" />
+    	Your browser does not support HTML5 audio
+    </audio>
+</div>
+</body>
+</html>
