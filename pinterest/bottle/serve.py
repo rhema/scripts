@@ -40,7 +40,8 @@ start_page = """
   
   
   <script>
-  var username = "";
+      var username = "";
+      var usernameRegex = /^[a-zA-Z0-9\-\_]+$/;
   
      function do_change()
      {
@@ -49,7 +50,15 @@ start_page = """
      function submitme()
      {
        console.log("click");
+       
        username = $("#username").val();
+       
+       if(! usernameRegex.test(username))
+       {
+         alert("Please enter a Pinterest username without spaces (Not your name or a link), like the example in the picture below, and click OK again.");
+         return;
+       }
+       
        $("#inputs").html("This may take up to 30 seconds.</br><img height='100px' width='100px' src='http://i.imgur.com/WfwMbhu.gif'/>");
        setTimeout(do_change,100);
      }
@@ -105,7 +114,7 @@ def index(name='World'):
 #    time.sleep(1)
     return template('<h3>It worked!</h3>Please scroll down and enter this into the box: <h3>{{hash}}</h3>', hash=hash)
 
-host='localhost'
+host='0.0.0.0'
 port=12001
 if len(sys.argv) > 1:
     try:
