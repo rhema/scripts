@@ -69,8 +69,9 @@
 			for (task in count_me_down)
 			{
 			  time = count_me_down[task]['time'];
-			  $("#timers_area").append("<div id=\""+task+"\"><span id='spanme' class='spanner'><label>"+task+"</labal><label id='"+task+"_time'>: "+time+"</labal></span></div>");
-			  $("#"+task).css("color",count_me_down[task]['full']['color']);
+			  var task_id = task.split(" ").join("_");
+			  $("#timers_area").append("<div id=\""+task_id+"\"><span id='spanme' class='spanner'><label>"+task+"</labal><label id='"+task+"_time'>: "+time+"</labal></span></div>");
+			  $("#"+task_id).css("color",count_me_down[task]['full']['color']);
 			  //console.log("tick tick tick...");
 			  
 			  //count_me_down[task] = {}
@@ -126,7 +127,11 @@
 			var r_size = 5;
 			var cf = d3.scale.category10();
 			console.log("starting timers!!!!");
+			$("#timers_area").empty();
+			
+			//clear state
 			var times = parse_times();
+			count_me_down = [];
 			for(i in times)
 			{
 				add_countdown(times[i]['task'],times[i]['time'], times[i]);
