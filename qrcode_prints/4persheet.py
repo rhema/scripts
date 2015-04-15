@@ -26,7 +26,6 @@ http://ideamache.ecologylab.net/e/RHrpJBt1kA/""".split()
 
 
 
-
 def saveQrCodeSVG(filename,text, ptext):
     factory = qrcode.image.svg.SvgPathImage
     img = qrcode.make(text, image_factory=factory,box_size=30, border=4)
@@ -68,6 +67,7 @@ def saveQrCodeSVG(filename,text, ptext):
     drawing = svg2rlg(merged_svg_name)
     renderPDF.drawToFile(drawing, filename+".pdf")
 
+#i = 0
 i = 0
 for line in test_input:
     print line.split("/")[-2]
