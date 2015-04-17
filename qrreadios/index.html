@@ -1,0 +1,76 @@
+<html>
+	
+	<body>
+		<h2>TESTING THE QR CODE READER</h2>
+		<h3>Input file /  cam upload</h3>
+		<input id="fileselect" type="file" accept="image/*" capture="camera">
+		<h4>Vizi viz </h4>
+		<img id="imgtag" src="" width="300" height="200" alt="capture" />
+
+		<h5>Result</h5>
+		<p id="result">no data</p>
+		
+		
+		
+		<script type="text/javascript" src="js/qr/grid.js"></script>
+		<script type="text/javascript" src="js/qr/version.js"></script>
+		<script type="text/javascript" src="js/qr/detector.js"></script>
+		<script type="text/javascript" src="js/qr/formatinf.js"></script>
+		<script type="text/javascript" src="js/qr/errorlevel.js"></script>
+		<script type="text/javascript" src="js/qr/bitmat.js"></script>
+		<script type="text/javascript" src="js/qr/datablock.js"></script>
+		<script type="text/javascript" src="js/qr/bmparser.js"></script>
+		<script type="text/javascript" src="js/qr/datamask.js"></script>
+		<script type="text/javascript" src="js/qr/rsdecoder.js"></script>
+		<script type="text/javascript" src="js/qr/gf256poly.js"></script>
+		<script type="text/javascript" src="js/qr/gf256.js"></script>
+		<script type="text/javascript" src="js/qr/decoder.js"></script>
+		<script type="text/javascript" src="js/qr/qrcode.js"></script>
+		<script type="text/javascript" src="js/qr/findpat.js"></script>
+		<script type="text/javascript" src="js/qr/alignpat.js"></script>
+		<script type="text/javascript" src="js/qr/databr.js"></script>
+		
+		<script>
+			//http://www.purplesquirrels.com.au/2013/08/webcam-to-canvas-or-data-uri-with-html5-and-javascript/
+			
+			function readQrCode(data)
+			{
+				qrcode.callback = handleNewQrCode;
+				qrcode.decode(data);
+			}
+			
+			function handleNewQrCode(codeOrNah)
+			{
+				console.log(codeOrNah);
+				//This has two kinds of values. the right answer, and "error decoding QR Code"
+				if(codeOrNah != "error decoding QR Code")
+				{
+					var r = document.getElementById("result");
+					r.innerHTML = codeOrNah;
+				}
+			}
+			
+			var sel = document.getElementById('fileselect'); // get reference to file select input element
+			var fr;
+			var urlData = "";
+			sel.addEventListener('change',function(e){
+			    var f = sel.files[0]; // get selected file (camera capture)
+			    
+			    fr = new FileReader();
+			    fr.onload = receivedData; // add onload event
+			
+			    fr.readAsDataURL(f); // get captured image as data URI
+			    
+			})
+			
+			function receivedData() {           
+			    // readAsDataURL is finished - add URI to IMG tag src
+			    imgtag.src = fr.result;
+			    urlData = fr.result;
+			    readQrCode(urlData);
+			}
+
+			
+		</script>
+	</body>
+</html>
